@@ -28,9 +28,9 @@ class Booking(models.Model):
     servicio = models.ForeignKey(Service, on_delete=models.CASCADE, related_name='citas')
     fecha = models.DateField()
     hora = models.TimeField()
-    precio_total = models.DecimalField(max_digits=10, decimal_places=2)
+    precio_total = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
     monto_anticipo = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
-    saldo_pendiente = models.DecimalField(max_digits=10, decimal_places=2, editable=False)
+    saldo_pendiente = models.DecimalField(max_digits=10, decimal_places=2, editable=False, blank=True, null=True)
     notas = models.TextField(blank=True, null=True)
     estado = models.CharField(max_length=20, choices=STATUS_CHOICES, default='PENDIENTE')
 
@@ -40,6 +40,10 @@ class Booking(models.Model):
         # Regla 1: Enfermería no requiere anticipo (fuerza monto_anticipo = 0)
         if self.servicio and self.servicio.categoria == 'ENFERMERIA':
             self.monto_anticipo = 0.00
+
+        # si no se indico un precio total, asigna el precio del servicio elegido
+        if not self.precio_total and self.servicio:
+            self.precio_total = self.servicio.precio_base
 
         # Regla 2: El anticipo no puede superar el total
         if self.monto_anticipo > self.precio_total:
@@ -62,6 +66,9 @@ class Booking(models.Model):
             raise ValidationError({'hora': 'Ya existe una cita programada para esta misma fecha y hora.'})
 
     def save(self, *args, **kwargs):
+
+   
+
         # Fuerza la ejecución de las validaciones de clean() antes de guardar
         self.full_clean()
         
