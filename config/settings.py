@@ -40,6 +40,7 @@ INSTALLED_APPS = [
 
     # Librerías de terceros
     'rest_framework',
+    'django_filters',
     
     # Mis aplicaciones
     'agenda',
