@@ -58,7 +58,7 @@ Permite gestionar el ciclo de vida completo de las citas manteniendo las reglas 
 
 1. **Clonar el repositorio:**
    ```powershell
-   git clone [https://github.com/Alafi98/agenda-backend.git](https://github.com/Alafi98/agenda-backend.git)
+   git clone [https://github.com/Alafi98/agenda-pagos.git](https://github.com/Alafi98/agenda-pagos.git)
    cd agenda-backend
 
 2. ** Crear y activar el entorno virtual(Windows PowerShell):
