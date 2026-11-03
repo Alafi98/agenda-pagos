@@ -24,6 +24,24 @@ Sistema backend y API RESTful desarrollado en **Python 3.11** y **Django 5.2** p
 
 ---
 
+## 🔐 Autenticación y Permisos (JWT + Session)
+
+La API implementa la política de permisos **`IsAuthenticatedOrReadOnly`** combinando `JWTAuthentication` (para consumo desde clientes externos/Frontend) y `SessionAuthentication` (para pruebas en la Browsable API):
+- **Lectura (`GET`):** Pública para consulta de catálogo y disponibilidad.
+- **Escritura (`POST`, `PUT`, `PATCH`, `DELETE`):** Restringida a usuarios autenticados mediante token Bearer o sesión activa.
+
+### Endpoints de Autenticación (SimpleJWT)
+1. **Obtener par de tokens (`POST /api/token/`):**
+   Envía `username` y `password` en el cuerpo JSON. Retorna un token `access` (validez de 60 min) y un token `refresh` (validez de 7 días con rotación activa).
+2. **Renovar token de acceso (`POST /api/token/refresh/`):**
+   Envía el token `refresh` para obtener un nuevo token `access` sin requerir credenciales nuevamente.
+3. **Uso en peticiones protegidas:**
+   Incluye el encabezado HTTP en cada solicitud de escritura:
+   ```http
+   Authorization: Bearer <tu_access_token>
+
+---
+
 ## 🌐 Especificación de la API REST
 
 La API está construida con `ModelViewSet` y `DefaultRouter`, aplicando la política de permisos **`IsAuthenticatedOrReadOnly`**:
@@ -81,7 +99,7 @@ Permite gestionar el ciclo de vida completo de las citas manteniendo las reglas 
     python manage.py migrate
     python manage.py runserver
   -Browsable API: http://127.0.0.1:8000/api/
-
+  -Obtener Token JWT: http://127.0.0.1:8000/api/token/
   -Panel Administrativo: http://127.0.0.1:8000/admin/
 
 
