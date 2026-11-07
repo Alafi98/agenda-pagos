@@ -1,3 +1,4 @@
+from decimal import Decimal
 from django.db import models
 from django.core.exceptions import ValidationError
 from django.utils import timezone
@@ -39,7 +40,7 @@ class Booking(models.Model):
 
         # Regla 1: Enfermería no requiere anticipo (fuerza monto_anticipo = 0)
         if self.servicio and self.servicio.categoria == 'ENFERMERIA':
-            self.monto_anticipo = 0.00
+            self.monto_anticipo = Decimal(0.00)
 
         # si no se indico un precio total, asigna el precio del servicio elegido
         if not self.precio_total and self.servicio:
