@@ -5,12 +5,10 @@ Sistema backend y API RESTful desarrollado en **Python 3.11** y **Django 5.2** p
 ## 🚀 Tecnologías Utilizadas
 - **Lenguaje y Framework:** Python 3.11 & Django 5.2
 - **API REST:** Django REST Framework (DRF)
+- **Autenticación y Seguridad:** JWT (`djangorestframework-simplejwt`) & Variables de entorno (`python-dotenv`)
 - **Filtrado y Búsquedas:** `django-filter` + `SearchFilter` & `OrderingFilter`
-- **Seguridad y Configuración:** `python-dotenv` (Variables de entorno)
 - **Base de Datos:** SQLite (Entorno de desarrollo local)
-- **Control de Versiones:** Git & GitHub (Flujo basado en ramas `feature/*`)
-
----
+- **Control de Versiones:** Git & GitHub (Flujo basado en ramas `feature/*` y GitHub Projects)
 
 ## 📌 Arquitectura y Lógica de Negocio (ORM)
 
@@ -22,11 +20,9 @@ Sistema backend y API RESTful desarrollado en **Python 3.11** y **Django 5.2** p
   - **Cálculo dinámico de saldos:** Calcula en el servidor el `saldo_pendiente` (`precio_total - monto_anticipo`) y protege estos campos como solo lectura (`readonly_fields`) tanto en el Django Admin como en la API.
   - **Validaciones de negocio a nivel de servidor:** Prevención de solapamiento de horarios, bloqueo de fechas pasadas, exención de anticipos según categoría y validación para que el `monto_anticipo` nunca supere el `precio_total`.
 
----
-
 ## 🔐 Autenticación y Permisos (JWT + Session)
 
-La API implementa la política de permisos **`IsAuthenticatedOrReadOnly`** combinando `JWTAuthentication` (para consumo desde clientes externos/Frontend) y `SessionAuthentication` (para pruebas en la Browsable API):
+La API está construida con `ModelViewSet` y `DefaultRouter`, implementando la política **`IsAuthenticatedOrReadOnly`** mediante `JWTAuthentication` (clientes externos/Frontend) y `SessionAuthentication` (Browsable API):
 - **Lectura (`GET`):** Pública para consulta de catálogo y disponibilidad.
 - **Escritura (`POST`, `PUT`, `PATCH`, `DELETE`):** Restringida a usuarios autenticados mediante token Bearer o sesión activa.
 
@@ -69,15 +65,22 @@ Permite gestionar el ciclo de vida completo de las citas manteniendo las reglas 
   - `/api/bookings/?search=Maria` (busca en `cliente_nombre`, `cliente_contacto` y `notas`)
 - **Ordenamiento (`ordering_fields`):**
   - Por defecto ordena desde las citas más próximas/recientes (`-fecha`, `-hora`). Soporta ordenamiento por `fecha`, `hora`, `precio_total` y `saldo_pendiente`.
-
+### 3. Reporte Financiero y Cierre Mensual (`/api/bookings/reporte-financiero/`)
+Endpoint protegido (`IsAuthenticated`) que calcula métricas financieras directamente en la base de datos mediante agregaciones SQL (`Sum`, `Count`, `Coalesce`, `TruncMonth`), excluyendo citas canceladas por defecto:
+- **Resumen General:** Total de citas, ingresos esperados, anticipos recaudados y saldo total por cobrar.
+- **Ganancias por Mes (`ganancias_por_mes`):** Historial agrupado por mes (`YYYY-MM`) con el desglose de ingresos, anticipos y saldos pendientes de cada periodo.
+- **Desglose por Categoría:** Comparativa financiera entre `ESTETICA` y `ENFERMERIA`.
+- **Filtros soportados:**
+  - Por año y mes específico: `/api/bookings/reporte-financiero/?anio=2026&mes=11`
+  - Combinado con filtros de reserva: `/api/bookings/reporte-financiero/?estado=COMPLETADA`
 ---
 
 ## ⚙️ Instalación y Ejecución Local
 
 1. **Clonar el repositorio:**
-   ```powershell
-   git clone [https://github.com/Alafi98/agenda-pagos.git](https://github.com/Alafi98/agenda-pagos.git)
-   cd agenda-backend
+   powershell
+   git clone [https://github.com/Alafi98/agenda-pagos.git]
+   cd agenda-pagos
 
 2. ** Crear y activar el entorno virtual(Windows PowerShell):
   python -m venv venv
@@ -102,5 +105,19 @@ Permite gestionar el ciclo de vida completo de las citas manteniendo las reglas 
   -Obtener Token JWT: http://127.0.0.1:8000/api/token/
   -Panel Administrativo: http://127.0.0.1:8000/admin/
 
+## 🛣️ Próximos Pasos (Roadmap)
+[x] Diseño de modelos ORM y reglas de negocio automatizadas (Service y Booking).
+
+[x] Configuración personalizada de Django Admin.
+
+[x] Construcción de endpoints REST con ModelViewSet, validaciones cruzadas y to_representation.
+
+[x] Implementación de filtros avanzados, búsquedas y ordenamiento con django-filter.
+
+[x] Implementación de autenticación basada en Tokens / JWT (SimpleJWT) y protección de rutas.
+
+[x] Desarrollo del Módulo de Reporte Financiero con agregaciones mensuales.
+
+[ ] Migración a PostgreSQL y despliegue a producción (Render / Railway).
 
 
