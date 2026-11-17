@@ -1,5 +1,7 @@
 # Agenda Personal - Backend (Django & DRF)
 
+🌐 **Demo en vivo (API en Producción):** [https://agenda-pagos-api.onrender.com/api/](https://agenda-pagos-api.onrender.com/api/)
+
 Sistema backend y API RESTful desarrollado en **Python 3.11** y **Django 5.2** para la gestión integral del catálogo de servicios (estética y enfermería), control de citas y cálculo automatizado de saldos y anticipos.
 
 ## 🚀 Tecnologías Utilizadas
@@ -7,7 +9,8 @@ Sistema backend y API RESTful desarrollado en **Python 3.11** y **Django 5.2** p
 - **API REST:** Django REST Framework (DRF)
 - **Autenticación y Seguridad:** JWT (`djangorestframework-simplejwt`) & Variables de entorno (`python-dotenv`)
 - **Filtrado y Búsquedas:** `django-filter` + `SearchFilter` & `OrderingFilter`
-- **Base de Datos:** SQLite (Entorno de desarrollo local)
+-**Base de Datos y Despliegue:** PostgreSQL (Producción en Render) & SQLite (Desarrollo local), servido con `Gunicorn` y `WhiteNoise`.
+- **Testing:** Suite de pruebas automatizadas (`APITestCase`).
 - **Control de Versiones:** Git & GitHub (Flujo basado en ramas `feature/*` y GitHub Projects)
 
 ## 📌 Arquitectura y Lógica de Negocio (ORM)
@@ -118,6 +121,6 @@ Endpoint protegido (`IsAuthenticated`) que calcula métricas financieras directa
 
 [x] Desarrollo del Módulo de Reporte Financiero con agregaciones mensuales.
 
-[ ] Migración a PostgreSQL y despliegue a producción (Render / Railway).
+[x] Migración a PostgreSQL y despliegue a producción (Render / Railway).
 
 
